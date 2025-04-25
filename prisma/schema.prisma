@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+enum QuestionType {
+  text
+  email
+  number
+  phone
+  multiple_choice
+  checkbox
+  dropdown
+  rating
+  likert
+  linear_scale
+  date
+  time
+  datetime
+  file
+  slider
+}
+
+enum ProviderIdType {
+  google
+  credentials
+}
+
+model User {
+  id            String     @id
+  name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now())
+  accounts      Account[]
+  surveys       Survey[]
+  responses     Response[]
+
+  @@map("users")
+}
+
+model Account {
+  id           String         @id
+  providerId   ProviderIdType @default(credentials) // consider using enum if you want stricter typing
+  accountId    String
+  userId       String
+  password     String?
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, providerId])
+  @@map("accounts")
+}
+
+model Survey {
+  id                      String     @id
+  userId                  String?
+  title                   String
+  description             String?
+  requiresSignIn          Boolean    @default(false)
+  showProgressBar         Boolean    @default(false)
+  showLinkToSubmitAnother Boolean    @default(false)
+  isPublished             Boolean    @default(false)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @default(now())
+  user                    User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions               Question[]
+  responses               Response[]
+  @@map("surveys")
+}
+
+model Question {
+  id           String       @id
+  surveyId     String?
+  questionText String
+  questionType QuestionType @default(text)
+  options      Json?
+  required     Boolean      @default(true)
+  orderNumber  Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+  survey       Survey?      @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answers      Answer[]
+
+  @@map("questions")
+}
+
+model Response {
+  id          String   @id
+  surveyId    String?
+  userId      String?
+  submittedAt DateTime @default(now())
+  survey      Survey?  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  answers     Answer[]
+
+  @@map("responses")
+}
+
+model Answer {
+  id           String    @id
+  responseId   String?
+  questionId   String?
+  answerText   String?
+  answerNumber Decimal?
+  answerJson   Json?
+  createdAt    DateTime  @default(now())
+  response     Response? @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question     Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("answers")
+}

@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: deep-poll-postgres
+    environment:
+      POSTGRES_USER: deepuser
+      POSTGRES_PASSWORD: deeppassword
+      POSTGRES_DB: deeppoll
+    ports:
+      - "5432:5432"
+    volumes:
+      - deep_poll_postgres_data:/var/lib/postgresql/data
+    networks:
+      - deep-poll-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: deep-poll-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - deep-poll-network
+    restart: unless-stopped
+
+networks:
+  deep-poll-network:
+    driver: bridge
+
+volumes:
+  deep_poll_postgres_data:
