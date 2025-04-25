@@ -75,7 +75,7 @@ export const loginUser = factory.createHandlers(
       return c.json({ error: "Invalid credentials" }, 401);
     }
     const payload = {
-      id: account.userId,
+      id: account.id,
       email: account.user.email,
       is_verified: account.user.emailVerified,
       name: account.user.name,

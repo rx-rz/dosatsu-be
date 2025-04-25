@@ -1,15 +1,20 @@
 import { Hono } from "hono";
-import { createSurvey, deleteSurvey, getSurvey, listSurveys, publishSurvey } from "./survey.handlers.js";
+import {
+  createSurvey,
+  deleteSurvey,
+  getSurvey,
+  listSurveys,
+  publishSurvey,
+} from "./survey.handlers.js";
 
-export const surveyRouter = new Hono()
+export const surveyRouter = new Hono();
 
-surveyRouter.post('/surveys', ...createSurvey)
+surveyRouter.post("/", ...createSurvey);
 
-surveyRouter.get('/surveys/:id', ...getSurvey)
+surveyRouter.get("/:id", ...getSurvey);
 
-surveyRouter.get('/surveys', ...listSurveys)
+surveyRouter.get("/", ...listSurveys);
 
-surveyRouter.delete('/surveys/:id', ...deleteSurvey)
+surveyRouter.delete("/:id", ...deleteSurvey);
 
-surveyRouter.patch('/surveys/:id/publish', ...publishSurvey)
-
+surveyRouter.patch("/:id/publish", ...publishSurvey);

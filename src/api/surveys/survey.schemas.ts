@@ -12,7 +12,7 @@ const createSurveySchema = z.object({
     showProgressBar: z.boolean().optional().default(false),
     showLinkToSubmitAnother: z.boolean().optional().default(false),
     isPublished: z.boolean().optional().default(false),
-    questions: z.array(questionSchema).min(1),
+    questions: z.array(questionSchema).optional().default([]),
   })
   
 export type CreateSurveyDto = z.infer<typeof createSurveySchema>

@@ -8,6 +8,7 @@ import {
   PgError,
   ZodValidationError,
 } from "./api/utils/errors.js";
+import { surveyRouter } from "./api/surveys/survey.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -16,7 +17,7 @@ app.get("/", (c) => {
 });
 
 app.route("/auth", authRouter);
-
+app.route("/surveys", surveyRouter);
 app.onError((err, c) => {
   if (err instanceof ZodValidationError) {
     return c.json(

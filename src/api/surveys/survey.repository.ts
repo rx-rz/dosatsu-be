@@ -10,7 +10,7 @@ const createSurvey = async (dto: CreateSurveyDto) => {
       id: createId(),
       questions: {
         createMany: {
-          data: dto.questions.map((q, i) => ({
+          data: dto.questions.map((q) => ({
             questionText: q.questionText,
             orderNumber: q.orderNumber,
             id: q.id,
