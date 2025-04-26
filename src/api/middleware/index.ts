@@ -3,7 +3,7 @@ import { verify } from "hono/jwt";
 import { JwtTokenExpired } from "hono/utils/jwt/types";
 
 export type JWTPayload = {
-  id: string;
+  account_id: string;
   email: string;
   name: string;
   exp: string;
