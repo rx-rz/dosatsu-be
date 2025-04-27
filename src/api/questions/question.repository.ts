@@ -1,13 +1,26 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/index.js";
 
-export const createQuestion = async (dto: Prisma.QuestionCreateInput) => {
-  return await prisma.question.create({ data: dto });
+const checkIfQuestionExists = async ({id}: {id: string}) => {
+  return await prisma.question.findUnique({
+    where: {id},
+    select: {id: true}
+  })
+}
+
+const upsertQuestion = async ({ dto }: { dto: Prisma.QuestionCreateInput }) => {
+  return await prisma.question.upsert({
+    where: { id: dto.id }, 
+    update: dto,
+    create: dto,
+    select: { id: true },
+  });
 };
 
-export const getQuestionById = async (id: { id: string }) => {
+
+const getQuestionById = async ({id}: { id: string }) => {
   return await prisma.question.findUnique({
-    where: { id: id.id },
+    where: { id},
     include: {
       answers: {
         select: {
@@ -23,11 +36,7 @@ export const getQuestionById = async (id: { id: string }) => {
   });
 };
 
-export const getQuestionsBySurveyId = async ({
-  surveyId,
-}: {
-  surveyId: string;
-}) => {
+const getQuestionsBySurveyId = async ({ surveyId }: { surveyId: string }) => {
   return await prisma.question.findMany({
     where: { surveyId },
     // include: {
@@ -46,7 +55,7 @@ export const getQuestionsBySurveyId = async ({
   });
 };
 
-export const updateQuestion = async ({
+const updateQuestion = async ({
   questionId,
   dto,
 }: {
@@ -59,8 +68,17 @@ export const updateQuestion = async ({
   });
 };
 
-export const deleteQuestion = async (id: { id: string }) => {
+const deleteQuestion = async (id: { id: string }) => {
   return await prisma.question.delete({
     where: { id: id.id },
   });
-}
+};
+
+export const questionRepository = {
+  checkIfQuestionExists,
+  upsertQuestion,
+  getQuestionById,
+  getQuestionsBySurveyId,
+  updateQuestion,
+  deleteQuestion,
+};

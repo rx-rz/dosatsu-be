@@ -1,12 +1,13 @@
 import { Hono } from "hono";
+import { createOrUpdateQuestion, deleteQuestion, getQuestion, getQuestionsBySurveyId } from "./question.handlers.js";
 
 export const questionRouter = new Hono()
 
-questionRouter.post('/surveys/:surveyId/questions')
+questionRouter.post('/surveys/:surveyId/questions', ...createOrUpdateQuestion)
 
-questionRouter.get('/surveys/:surveyId/questions')
+questionRouter.get('/surveys/:surveyId/questions', ...getQuestionsBySurveyId)
 
-questionRouter.put('/surveys/:surveyId/questions/:id')
+questionRouter.get('/surveys/:surveyId/questions/:id', ...getQuestion)
 
-questionRouter.delete('/surveys/:surveyId/questions/:id')
+questionRouter.delete('/surveys/:surveyId/questions/:id', ...deleteQuestion)
 
