@@ -9,7 +9,8 @@ import { sign, verify } from "hono/jwt";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { DuplicateEntryError, ZodValidationError } from "../utils/errors.js";
 import type { JWTPayload } from "../middleware/index.js";
-import { successResponse } from "../utils/response.js";
+import { errorResponse, successResponse } from "../utils/response.js";
+import { error } from "console";
 
 const factory = createFactory();
 
@@ -66,11 +67,11 @@ export const loginUser = factory.createHandlers(
       providerId: "credentials",
     });
     if (!account) {
-      return c.json({ error: "Invalid credentials" }, 401);
+      return errorResponse(c, "Invalid credentials", 401);
     }
     const isValid = await compare(password, account.password ?? "");
     if (!isValid) {
-      return c.json({ error: "Invalid credentials" }, 401);
+      return errorResponse(c, "Invalid credentials", 401);
     }
     const payload = {
       account_id: account.id,
@@ -88,10 +89,7 @@ export const loginUser = factory.createHandlers(
 export const getCurrentSession = factory.createHandlers(async (c) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
-    return c.json(
-      { success: false, message: "No or invalid authorization header" },
-      401
-    );
+    return errorResponse(c, "No or invalid authorization header", 401);
   }
   const token = authHeader.split(" ")[1];
   try {
@@ -101,10 +99,7 @@ export const getCurrentSession = factory.createHandlers(async (c) => {
     )) as unknown as JWTPayload;
     return c.json({ success: true, payload });
   } catch (err) {
-    return c.json(
-      { success: false, details: "", message: "JWT Verification error" },
-      401
-    );
+    return errorResponse(c, "JWT Verification error", 401);
   }
 });
 
