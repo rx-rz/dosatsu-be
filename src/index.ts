@@ -1,7 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { authRouter } from "./api/auth/auth.routes.js";
-import { handleErrorResponse } from "./api/utils/response.js";
 import {
   DuplicateEntryError,
   InternalServerError,
@@ -9,6 +8,7 @@ import {
   ZodValidationError,
 } from "./api/utils/errors.js";
 import { surveyRouter } from "./api/surveys/survey.routes.js";
+import { errorResponse } from "./api/utils/response.js";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -20,46 +20,28 @@ app.route("/auth", authRouter);
 app.route("/surveys", surveyRouter);
 app.onError((err, c) => {
   if (err instanceof ZodValidationError) {
-    return c.json(
-      {
-        message: "Validation error",
-        details: err.formattedError,
-        success: false,
-      },
-      400
-    );
+    return errorResponse(c, err.message, 400, undefined, err.formattedError);
   }
 
   if (err instanceof DuplicateEntryError) {
-    return c.json({ message: err.message, details: null, success: false }, 401);
+    return errorResponse(c, err.message, 409, undefined, err.cause);
   }
 
   if (err instanceof PgError) {
-    return c.json(
-      {
-        message: err.getResponseMessageFromPgError(err.originalError),
-        details: err,
-        success: false,
-      },
-      500
+    return errorResponse(
+      c,
+      err.getResponseMessageFromPgError(err.originalError),
+      500,
+      undefined,
+      err.originalError
     );
   }
 
   if (err instanceof InternalServerError) {
-    return c.json(
-      {
-        message: "Internal server error",
-        details: err.message,
-        success: false,
-      },
-      500
-    );
+    return errorResponse(c, err.message, 500, undefined, err.cause);
   }
 
-  return c.json(
-    { message: "An unexpected error occurred", details: err, success: false },
-    500
-  );
+  return errorResponse(c, "An unexpected error occurred", 500, undefined, err);
 });
 
 const port = 3000;

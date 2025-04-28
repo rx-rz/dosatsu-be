@@ -9,6 +9,7 @@ import { sign, verify } from "hono/jwt";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { DuplicateEntryError, ZodValidationError } from "../utils/errors.js";
 import type { JWTPayload } from "../middleware/index.js";
+import { successResponse } from "../utils/response.js";
 
 const factory = createFactory();
 
@@ -49,10 +50,7 @@ export const registerUser = factory.createHandlers(
         tx
       );
     });
-    return c.json(
-      { success: true, message: "User registered successfully", data: null },
-      201
-    );
+    return successResponse(c, null, "User registered successfully", 201);
   }
 );
 
@@ -83,7 +81,7 @@ export const loginUser = factory.createHandlers(
     };
     const token = await sign(payload, process.env.JWT_SECRET!);
     setCookie(c, "token", `Bearer ${token}`);
-    return c.json({ success: true, message: "Log in successful", data: token });
+    return successResponse(c, `Bearer ${token}`, "Login successful", 200);
   }
 );
 

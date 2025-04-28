@@ -1,3 +1,4 @@
+import type { Context } from "hono";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
 
@@ -17,23 +18,21 @@ type ErrorResponse = {
   success: false;
 };
 
-export function successResponse<T>(data: T, message: string) {
-  const response = {
-    message,
-    //ensures any data returned is always wrapped in a data object
-    data: {data},
+export const successResponse = (c: Context, data: any = {}, message = 'Success', status = 200) => {
+  return c.json({
     success: true,
-  } as SuccessResponse<T>;
-  return response;
+    message,
+    data: {data},
+  }, status as any)
 }
 
-export function errorResponse(message: string, errors?: Errors) {
-  const response = {
-    message,
-    errors,
+export const errorResponse = (c: Context, message = 'Something went wrong', status = 400, errorCode?: string, details: any = {}) => {
+  return c.json({
     success: false,
-  } as ErrorResponse;
-  return response;
+    message,
+    errorCode,
+    details,
+  }, status as any)
 }
 
 const handlePgError = (err: any) => {
