@@ -81,7 +81,7 @@ export const loginUser = factory.createHandlers(
     };
     const token = await sign(payload, process.env.JWT_SECRET!);
     setCookie(c, "token", `Bearer ${token}`);
-    return successResponse(c, `Bearer ${token}`, "Login successful", 200);
+    return successResponse(c, { ...payload }, "Login successful", 200);
   }
 );
 

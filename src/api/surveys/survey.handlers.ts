@@ -2,6 +2,7 @@ import { createFactory } from "hono/factory";
 import { validator } from "hono/validator";
 import { v } from "./survey.schemas.js";
 import { surveyRepository } from "./survey.repository.js";
+import { errorResponse, successResponse } from "../utils/response.js";
 const factory = createFactory();
 
 export const createSurvey = factory.createHandlers(
@@ -10,22 +11,45 @@ export const createSurvey = factory.createHandlers(
     return parsed;
   }),
   async (c) => {
-    const { id: surveyId, ...surveyData } = c.req.valid("json");
-    if (surveyId) {
-      const survey = await surveyRepository.updateSurvey({
-        dto: surveyData,
-        surveyId,
-      });
-      if (!survey) {
-        return c.json({ message: "Survey not found" }, 404);
-      }
-      return c.json(
-        { id: survey.id, message: "Survey updated successfully" },
-        200
-      );
+    const dto = c.req.valid("json");
+    const survey = await surveyRepository.createSurvey(dto);
+    if (!survey) {
+      return errorResponse(c, "Failed to create survey", 500);
     }
-    const survey = await surveyRepository.createSurvey(surveyData)
-    return c.json({id: survey.id, message: "Survey created successfully"}, 201)
+    return successResponse(
+      c,
+      { id: survey.id },
+      "Survey created successfully",
+      201
+    );
+  }
+);
+
+export const updateSurvey = factory.createHandlers(
+  validator("json", (value) => {
+    const parsed = v.updateSurveySchema.parse(value);
+    return parsed;
+  }),
+  validator("param", (value) => {
+    const parsed = v.idSchema.parse(value);
+    return parsed;
+  }),
+  async (c) => {
+    const dto = c.req.valid("json");
+    const surveyId = c.req.valid("param");
+    const survey = await surveyRepository.updateSurvey({
+      dto,
+      surveyId,
+    });
+    if (!survey) {
+      return errorResponse(c, "Failed to update survey", 500);
+    }
+    return successResponse(
+      c,
+      { id: survey.id },
+      "Survey updated successfully",
+      200
+    );
   }
 );
 
