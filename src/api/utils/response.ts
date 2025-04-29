@@ -6,18 +6,6 @@ type Errors = {
   [key: string]: any;
 };
 
-type SuccessResponse<T> = {
-  message: string;
-  data: T;
-  success: true;
-};
-
-type ErrorResponse = {
-  message: string;
-  errors?: Errors;
-  success: false;
-};
-
 export const successResponse = (c: Context, data: any = {}, message = 'Success', status = 200) => {
   return c.json({
     success: true,

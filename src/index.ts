@@ -9,8 +9,28 @@ import {
 } from "./api/utils/errors.js";
 import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
+import { secureHeaders } from "hono/secure-headers";
+import { cors } from "hono/cors";
 
 const app = new Hono().basePath("/api/v1");
+
+app.use(secureHeaders());
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:8080",
+      "http://127.0.0.1:3000",
+    ],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+    maxAge: 3600,
+    exposeHeaders: ["Content-Range", "X-Content-Range"],
+  })
+);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");

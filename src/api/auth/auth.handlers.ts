@@ -10,7 +10,6 @@ import { deleteCookie, setCookie } from "hono/cookie";
 import { DuplicateEntryError, ZodValidationError } from "../utils/errors.js";
 import type { JWTPayload } from "../middleware/index.js";
 import { errorResponse, successResponse } from "../utils/response.js";
-import { error } from "console";
 
 const factory = createFactory();
 
