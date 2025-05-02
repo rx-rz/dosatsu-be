@@ -39,6 +39,7 @@ app.get("/", (c) => {
 app.route("/auth", authRouter);
 app.route("/surveys", surveyRouter);
 app.onError((err, c) => {
+  console.error(err)
   if (err instanceof ZodValidationError) {
     return errorResponse(c, err.message, 400, undefined, err.formattedError);
   }
@@ -70,6 +71,7 @@ console.log(`Server is running on http://localhost:${port}/api/v1`);
 serve({
   fetch: app.fetch,
   port,
+
 });
 
 serve(

@@ -7,4 +7,5 @@ export const getJWTPayload = (c: Context): JWTPayload => {
         throw new Error("JWT payload not found");
     }
     return payload;
+    
 }

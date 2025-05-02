@@ -3,6 +3,8 @@ import { validator } from "hono/validator";
 import { v } from "./survey.schemas.js";
 import { surveyRepository } from "./survey.repository.js";
 import { errorResponse, successResponse } from "../utils/response.js";
+import { getJWTPayload } from "../utils/jwt-payload.js";
+import { createId } from "@paralleldrive/cuid2";
 const factory = createFactory();
 
 export const createSurvey = factory.createHandlers(
@@ -12,10 +14,12 @@ export const createSurvey = factory.createHandlers(
   }),
   async (c) => {
     const dto = c.req.valid("json");
-    const survey = await surveyRepository.createSurvey(dto);
-    if (!survey) {
-      return errorResponse(c, "Failed to create survey", 500);
-    }
+    const accountId = getJWTPayload(c)?.account_id;
+    const survey = await surveyRepository.createSurvey({
+      ...dto,
+      id: createId(),
+      account: { connect: { id: accountId } },
+    });
     return successResponse(
       c,
       { id: survey.id },
@@ -37,8 +41,10 @@ export const updateSurvey = factory.createHandlers(
   async (c) => {
     const dto = c.req.valid("json");
     const surveyId = c.req.valid("param");
+    const accountId = getJWTPayload(c)?.account_id;
     const survey = await surveyRepository.updateSurvey({
       dto,
+      accountId,
       surveyId,
     });
     if (!survey) {
@@ -53,18 +59,11 @@ export const updateSurvey = factory.createHandlers(
   }
 );
 
-export const listSurveys = factory.createHandlers(
-  validator("param", (value) => {
-    console.log(value);
-    const parsed = v.idSchema.parse(value);
-    return parsed;
-  }),
-  async (c) => {
-    const userId = c.req.valid("param");
-    const userSurveys = surveyRepository.getSurveysByUserID({ userId });
-    return c.json({ surveys: userSurveys }, 200);
-  }
-);
+export const listSurveys = factory.createHandlers(async (c) => {
+  const accountId = getJWTPayload(c)?.account_id;
+  const surveys = await surveyRepository.getSurveysByAccountID({ accountId });
+  return successResponse(c, { surveys }, "Surveys fetched successfully", 200);
+});
 
 export const getSurvey = factory.createHandlers(
   validator("param", (value) => {

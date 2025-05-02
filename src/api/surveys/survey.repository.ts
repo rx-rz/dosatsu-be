@@ -1,8 +1,9 @@
 import { prisma } from "../../db/index.js";
 import { createId } from "@paralleldrive/cuid2";
 import type { CreateSurveyDto } from "./survey.schemas.js";
+import type { Prisma } from "@prisma/client";
 
-const createSurvey = async (dto: CreateSurveyDto) => {
+const createSurvey = async (dto: Prisma.SurveyCreateInput) => {
   const survey = await prisma.survey.create({
     data: {
       ...dto,
@@ -17,18 +18,19 @@ const createSurvey = async (dto: CreateSurveyDto) => {
 
 const updateSurvey = async ({
   dto,
+  accountId,
   surveyId,
 }: {
   dto: Partial<CreateSurveyDto>;
+  accountId: string;
   surveyId: string;
 }) => {
-
   return await prisma.survey.update({
     where: { id: surveyId },
     data: {
       ...dto,
       id: surveyId,
-      userId: dto.userId,
+      accountId: accountId,
     },
     select: {
       id: true,
@@ -45,9 +47,9 @@ const getSurveyBySurveyID = async ({ surveyId }: { surveyId: string }) => {
   });
 };
 
-const getSurveysByUserID = async ({ userId }: { userId: string }) => {
+const getSurveysByAccountID = async ({ accountId }: { accountId: string }) => {
   return await prisma.survey.findMany({
-    where: { userId },
+    where: { accountId },
   });
 };
 
@@ -61,7 +63,7 @@ const deleteSurveyBySurveyID = async ({ surveyId }: { surveyId: string }) => {
 export const surveyRepository = {
   createSurvey,
   updateSurvey,
-  getSurveysByUserID,
+  getSurveysByAccountID,
   getSurveyBySurveyID,
   deleteSurveyBySurveyID,
 };

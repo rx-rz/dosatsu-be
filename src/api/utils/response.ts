@@ -10,7 +10,7 @@ export const successResponse = (c: Context, data: any = {}, message = 'Success',
   return c.json({
     success: true,
     message,
-    data: {data},
+    data,
   }, status as any)
 }
 

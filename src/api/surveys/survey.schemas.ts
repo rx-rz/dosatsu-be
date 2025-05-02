@@ -2,8 +2,7 @@ import { z } from "zod";
 
 const idSchema = z.string().cuid();
 const createSurveySchema = z.object({
-  userId: z.string(),
-  title: z.string().min(1),
+  title: z.string().min(1).default("Untitled Survey"),
   description: z.string().optional(),
   requiresSignIn: z.boolean().optional().default(false),
   showProgressBar: z.boolean().optional().default(false),
@@ -11,7 +10,9 @@ const createSurveySchema = z.object({
   isPublished: z.boolean().optional().default(false),
 });
 
-const updateSurveySchema = createSurveySchema.omit({userId: true}).partial();
+export const updateSurveySchema = createSurveySchema
+  .merge(z.object({ id: z.string().cuid() }))
+  .partial();
 
 export type CreateSurveyDto = z.infer<typeof createSurveySchema>;
 export type UpdateSurveyDto = z.infer<typeof updateSurveySchema>;
