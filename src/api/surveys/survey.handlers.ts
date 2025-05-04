@@ -31,16 +31,19 @@ export const createSurvey = factory.createHandlers(
 
 export const updateSurvey = factory.createHandlers(
   validator("json", (value) => {
+    console.log({ dto: value });
     const parsed = v.updateSurveySchema.parse(value);
     return parsed;
   }),
   validator("param", (value) => {
+    console.log(value);
     const parsed = v.idSchema.parse(value);
     return parsed;
   }),
   async (c) => {
     const dto = c.req.valid("json");
-    const surveyId = c.req.valid("param");
+    const { id: surveyId } = c.req.valid("param");
+    console.log({ surveyId, dto });
     const accountId = getJWTPayload(c)?.account_id;
     const survey = await surveyRepository.updateSurvey({
       dto,
@@ -71,7 +74,7 @@ export const getSurvey = factory.createHandlers(
     return parsed;
   }),
   async (c) => {
-    const surveyId = c.req.valid("param");
+    const { id: surveyId } = c.req.valid("param");
     const survey = surveyRepository.getSurveyBySurveyID({ surveyId });
     return c.json({ survey }, 200);
   }
@@ -83,10 +86,12 @@ export const publishSurvey = factory.createHandlers(
     return parsed;
   }),
   async (c) => {
-    const surveyId = c.req.valid("param");
+    const { id: surveyId } = c.req.valid("param");
+    const accountId = getJWTPayload(c)?.account_id;
     const survey = surveyRepository.updateSurvey({
       dto: { isPublished: true },
       surveyId,
+      accountId,
     });
     return c.json({ survey }, 200);
   }
@@ -98,7 +103,7 @@ export const deleteSurvey = factory.createHandlers(
     return parsed;
   }),
   async (c) => {
-    const surveyId = c.req.valid("param");
+    const { id: surveyId } = c.req.valid("param");
     const survey = surveyRepository.deleteSurveyBySurveyID({ surveyId });
     return c.json({ survey }, 200);
   }

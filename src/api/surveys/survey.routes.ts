@@ -17,9 +17,9 @@ surveyRouter.get("/:id", requireAuth, ...getSurvey);
 
 surveyRouter.get("/", requireAuth, ...listSurveys);
 
-surveyRouter.patch("/:id", ...updateSurvey);
+surveyRouter.patch("/:id", requireAuth, ...updateSurvey);
 
-surveyRouter.patch("/:id/publish", ...publishSurvey);
+surveyRouter.patch("/:id/publish", requireAuth, ...publishSurvey);
 
-surveyRouter.delete("/:id", ...deleteSurvey);
+surveyRouter.delete("/:id", requireAuth, ...deleteSurvey);
 

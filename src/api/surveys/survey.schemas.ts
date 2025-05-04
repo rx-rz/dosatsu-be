@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-const idSchema = z.string().cuid();
+const idSchema = z.object({
+  id: z.string().cuid2()
+}) 
 const createSurveySchema = z.object({
   title: z.string().min(1).default("Untitled Survey"),
   description: z.string().optional(),
