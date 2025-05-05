@@ -1,26 +1,36 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/index.js";
 
-const checkIfQuestionExists = async ({id}: {id: string}) => {
+const checkIfQuestionExists = async ({ id }: { id: string }) => {
   return await prisma.question.findUnique({
-    where: {id},
-    select: {id: true}
-  })
-}
-
-const upsertQuestion = async ({ dto }: { dto: Prisma.QuestionCreateInput }) => {
-  return await prisma.question.upsert({
-    where: { id: dto.id }, 
-    update: dto,
-    create: dto,
+    where: { id },
     select: { id: true },
   });
 };
 
+const upsertQuestion = async ({
+  dto,
+  surveyId,
+}: {
+  dto: Prisma.QuestionCreateInput[];
+  surveyId: string;
+}) => {
+  const results = await Promise.all(
+    dto.map(async (question) => {
+      await prisma.question.upsert({
+        where: { id: question.id },
+        update: { ...question, survey: { connect: { id: surveyId } } },
+        create: { ...question, survey: { connect: { id: surveyId } } },
+        select: { id: true },
+      });
+    })
+  );
+  return results;
+};
 
-const getQuestionById = async ({id}: { id: string }) => {
+const getQuestionById = async ({ id }: { id: string }) => {
   return await prisma.question.findUnique({
-    where: { id},
+    where: { id },
     include: {
       answers: {
         select: {

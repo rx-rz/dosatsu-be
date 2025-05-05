@@ -1,12 +1,20 @@
 import { z } from "zod";
 
-export const idSchema = z.string().cuid();
+const idSchema = z.object({
+  id: z.string().cuid2(),
+});
+
+const surveyIdSchema = z.object({
+  surveyId: z.string().cuid2(),
+});
+
+const paramsSchema = idSchema.merge(surveyIdSchema)
 
 const baseQuestionSchema = z.object({
   questionText: z.string().min(1),
   required: z.boolean().default(true),
   orderNumber: z.number().int().nonnegative(),
-  id: idSchema,
+  id: z.string().cuid2(),
 });
 
 export const questionSchema = z.discriminatedUnion("questionType", [
@@ -344,9 +352,9 @@ export const questionSchema = z.discriminatedUnion("questionType", [
 
 export const questionsSchema = z.array(questionSchema);
 
-
-
 export const v = {
   createQuestionSchema: questionSchema,
   idSchema,
+  surveyIdSchema,
+  paramsSchema
 };

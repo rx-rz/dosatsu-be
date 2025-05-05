@@ -11,6 +11,7 @@ import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
+import { questionRouter } from "./api/questions/question.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -38,8 +39,9 @@ app.get("/", (c) => {
 
 app.route("/auth", authRouter);
 app.route("/surveys", surveyRouter);
+app.route("", questionRouter);
 app.onError((err, c) => {
-  console.error(err)
+  console.error(err);
   if (err instanceof ZodValidationError) {
     return errorResponse(c, err.message, 400, undefined, err.formattedError);
   }
@@ -71,7 +73,6 @@ console.log(`Server is running on http://localhost:${port}/api/v1`);
 serve({
   fetch: app.fetch,
   port,
-
 });
 
 serve(
