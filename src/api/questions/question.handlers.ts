@@ -8,20 +8,20 @@ const factory = createFactory();
 
 export const createOrUpdateQuestion = factory.createHandlers(
   validator("json", (value) => {
-    console.log({val: value, opts: value.options})
-    const parsed = questionsSchema.parse(value);
+    console.log({ val: value, opts: value.options });
+    const parsed = v.createQuestionSchema.parse(value);
     return parsed;
   }),
   validator("param", (value) => {
-    console.log({param: value})
+    console.log({ param: value });
     const parsed = v.surveyIdSchema.parse(value);
     return parsed;
   }),
   async (c) => {
     const dto = c.req.valid("json");
     const { surveyId } = c.req.valid("param");
-    await questionRepository.upsertQuestion({ dto, surveyId });
-    return successResponse(c, {}, "Questions created", 201);
+    const question = await questionRepository.upsertQuestion({ dto, surveyId });
+    return successResponse(c, { question }, "Questions created", 201);
   }
 );
 

@@ -12,20 +12,15 @@ const upsertQuestion = async ({
   dto,
   surveyId,
 }: {
-  dto: Prisma.QuestionCreateInput[];
+  dto: Prisma.QuestionCreateInput;
   surveyId: string;
 }) => {
-  const results = await Promise.all(
-    dto.map(async (question) => {
-      await prisma.question.upsert({
-        where: { id: question.id },
-        update: { ...question, survey: { connect: { id: surveyId } } },
-        create: { ...question, survey: { connect: { id: surveyId } } },
-        select: { id: true },
-      });
-    })
-  );
-  return results;
+  return await prisma.question.upsert({
+    where: { id: dto.id },
+    update: { ...dto, survey: { connect: { id: surveyId } } },
+    create: { ...dto, survey: { connect: { id: surveyId } } },
+    select: { id: true },
+  });
 };
 
 const getQuestionById = async ({ id }: { id: string }) => {

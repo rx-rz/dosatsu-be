@@ -12,6 +12,8 @@ import { errorResponse } from "./api/utils/response.js";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { questionRouter } from "./api/questions/question.routes.js";
+import { ZodError } from "zod";
+import { fromError } from "zod-validation-error";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -42,8 +44,14 @@ app.route("/surveys", surveyRouter);
 app.route("", questionRouter);
 app.onError((err, c) => {
   console.error(err);
-  if (err instanceof ZodValidationError) {
-    return errorResponse(c, err.message, 400, undefined, err.formattedError);
+  if (err instanceof ZodError) {
+    return errorResponse(
+      c,
+      err.message,
+      400,
+      undefined,
+      fromError(err).toString
+    );
   }
 
   if (err instanceof DuplicateEntryError) {
