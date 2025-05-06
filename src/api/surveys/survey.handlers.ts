@@ -104,7 +104,16 @@ export const deleteSurvey = factory.createHandlers(
   }),
   async (c) => {
     const { id: surveyId } = c.req.valid("param");
+
     const survey = surveyRepository.deleteSurveyBySurveyID({ surveyId });
-    return c.json({ survey }, 200);
+    if (!survey) {
+      return successResponse(
+        c,
+        { id: surveyId },
+        "Survey deleted successfully",
+        200
+      );
+    }
+    return successResponse(c, { survey }, "Survey deleted successfully", 200);
   }
 );
