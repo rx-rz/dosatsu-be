@@ -8,12 +8,10 @@ const factory = createFactory();
 
 export const createOrUpdateQuestion = factory.createHandlers(
   validator("json", (value) => {
-    console.log({ val: value, opts: value.options });
     const parsed = v.createQuestionSchema.parse(value);
     return parsed;
   }),
   validator("param", (value) => {
-    console.log({ param: value });
     const parsed = v.surveyIdSchema.parse(value);
     return parsed;
   }),

@@ -31,19 +31,16 @@ export const createSurvey = factory.createHandlers(
 
 export const updateSurvey = factory.createHandlers(
   validator("json", (value) => {
-    console.log({ dto: value });
     const parsed = v.updateSurveySchema.parse(value);
     return parsed;
   }),
   validator("param", (value) => {
-    console.log(value);
     const parsed = v.idSchema.parse(value);
     return parsed;
   }),
   async (c) => {
     const dto = c.req.valid("json");
     const { id: surveyId } = c.req.valid("param");
-    console.log({ surveyId, dto });
     const accountId = getJWTPayload(c)?.account_id;
     const survey = await surveyRepository.updateSurvey({
       dto,

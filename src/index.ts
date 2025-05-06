@@ -14,6 +14,7 @@ import { cors } from "hono/cors";
 import { questionRouter } from "./api/questions/question.routes.js";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
+import { responseRouter } from "./api/responses/response.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
@@ -41,7 +42,9 @@ app.get("/", (c) => {
 
 app.route("/auth", authRouter);
 app.route("/surveys", surveyRouter);
+app.route("", responseRouter);
 app.route("", questionRouter);
+
 app.onError((err, c) => {
   console.error(err);
   if (err instanceof ZodError) {
