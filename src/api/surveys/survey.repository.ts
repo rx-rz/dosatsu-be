@@ -34,9 +34,6 @@ const updateSurvey = async ({
     },
     select: {
       id: true,
-      accountId: true,
-      createdAt: true,
-      updatedAt: true
     },
   });
 };
