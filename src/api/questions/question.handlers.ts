@@ -2,19 +2,19 @@ import { createFactory } from "hono/factory";
 import { validator } from "hono/validator";
 import { questionsSchema, v } from "./question.schemas.js";
 import { questionRepository } from "./question.repository.js";
-import { successResponse } from "../utils/response.js";
+import { errorResponse, successResponse } from "../utils/response.js";
 
 const factory = createFactory();
 
 export const createOrUpdateQuestion = factory.createHandlers(
   validator("json", (value) => {
+    console.log({val: value, opts: value.options})
     const parsed = questionsSchema.parse(value);
-    console.log("YO!");
     return parsed;
   }),
   validator("param", (value) => {
+    console.log({param: value})
     const parsed = v.surveyIdSchema.parse(value);
-    console.log("HERE!");
     return parsed;
   }),
   async (c) => {
@@ -34,9 +34,14 @@ export const getQuestion = factory.createHandlers(
     const { id } = c.req.valid("param");
     const question = await questionRepository.getQuestionById({ id });
     if (!question) {
-      return c.json({ message: "Question not found" }, 404);
+      return errorResponse(c, "Question not found", 404);
     }
-    return c.json({ question }, 200);
+    return successResponse(
+      c,
+      { question },
+      "Question fetched successfully",
+      200
+    );
   }
 );
 
@@ -50,8 +55,12 @@ export const getQuestionsBySurveyId = factory.createHandlers(
     const questions = await questionRepository.getQuestionsBySurveyId({
       surveyId,
     });
-    console.log(questions)
-    return successResponse(c, {questions}, "Questions fetched successfully", 200);
+    return successResponse(
+      c,
+      { questions },
+      "Questions fetched successfully",
+      200
+    );
   }
 );
 
@@ -63,6 +72,11 @@ export const deleteQuestion = factory.createHandlers(
   async (c) => {
     const { id } = c.req.valid("param");
     const question = await questionRepository.deleteQuestion({ id });
-    return c.json({ question }, 200);
+    return successResponse(
+      c,
+      { question },
+      "Question successfully deleted",
+      200
+    );
   }
 );

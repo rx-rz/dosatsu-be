@@ -59,7 +59,7 @@ model Account {
 
   idToken        String?  @map("id_token")
   createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @map("updated_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
   idempotencyKey String?  @unique @map("idempotency_key")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -78,7 +78,7 @@ model Survey {
   showLinkToSubmitAnother Boolean  @default(false) @map("show_link_to_submit_another")
   isPublished             Boolean  @default(false) @map("is_published")
   createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @default(now()) @map("updated_at")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
   idempotencyKey          String?  @unique @map("idempotency_key")
 
   account   Account?   @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -97,7 +97,7 @@ model Question {
   required     Boolean      @default(true)
   orderNumber  Int          @map("order_number")
   createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @default(now()) @map("updated_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
 
   survey  Survey?  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   answers Answer[]

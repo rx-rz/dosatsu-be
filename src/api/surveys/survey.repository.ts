@@ -34,6 +34,9 @@ const updateSurvey = async ({
     },
     select: {
       id: true,
+      accountId: true,
+      createdAt: true,
+      updatedAt: true
     },
   });
 };
@@ -50,6 +53,7 @@ const getSurveyBySurveyID = async ({ surveyId }: { surveyId: string }) => {
 const getSurveysByAccountID = async ({ accountId }: { accountId: string }) => {
   return await prisma.survey.findMany({
     where: { accountId },
+    orderBy: { updatedAt: "desc" },
   });
 };
 
