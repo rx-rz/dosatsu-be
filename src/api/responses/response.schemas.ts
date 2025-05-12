@@ -12,6 +12,10 @@ const idSchema = z.object({
   id: z.string().cuid2(),
 });
 
+const surveyIdSchema = z.object({
+  surveyId: z.string().cuid2()
+})
+
 const responseSchema = z.object({
   accountId: z.string().cuid2().nullable(),
   answers: z.array(answerSchema),
@@ -30,6 +34,7 @@ export type CreateResponseDto = z.infer<typeof createResponseSchema>;
 export const v = {
   answerSchema,
   idSchema,
+  surveyIdSchema,
   responseSchema,
   createResponseSchema,
 };

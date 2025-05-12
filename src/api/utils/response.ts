@@ -57,31 +57,31 @@ const handlePgError = (err: any) => {
   );
 };
 
-export function handleErrorResponse(error: any) {
-  const errorObj = error.error;
-  if (errorObj instanceof ZodError) {
+  export function handleErrorResponse(error: any, c: Context) {
+    const errorObj = error.error;
+    if (errorObj instanceof ZodError) {
+      return {
+        statusCode: 400,
+        type: "Validation Error",
+        message: "Validation Error",
+        errors: fromError(errorObj).details.map((error) => error.message),
+      };
+    }
+
+    if (errorObj.code) {
+      const errorDetails = handlePgError(errorObj);
+      return {
+        statusCode: errorDetails.statusCode,
+        message: "Database Error",
+        type: "Database Error",
+        errors: { message: errorDetails.message },
+      };
+    }
+
     return {
-      statusCode: 400,
-      type: "Validation Error",
-      message: "Validation Error",
-      errors: fromError(errorObj).details.map((error) => error.message),
+      statusCode: errorObj.status || 500,
+      message: errorObj.message || "Internal Server Error",
+      type: "Internal Server Error",
+      errors: errorObj.errors || null,
     };
   }
-
-  if (errorObj.code) {
-    const errorDetails = handlePgError(errorObj);
-    return {
-      statusCode: errorDetails.statusCode,
-      message: "Database Error",
-      type: "Database Error",
-      errors: { message: errorDetails.message },
-    };
-  }
-
-  return {
-    statusCode: errorObj.status || 500,
-    message: errorObj.message || "Internal Server Error",
-    type: "Internal Server Error",
-    errors: errorObj.errors || null,
-  };
-}

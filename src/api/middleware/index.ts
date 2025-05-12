@@ -10,6 +10,7 @@ export type JWTPayload = {
   exp: string;
   is_verified: boolean;
 };
+
 export const requireAuth = createMiddleware(async (c, next) => {
   const authHeader = getCookie(c, "access_token");
   const token = authHeader && authHeader.split(" ")[1];

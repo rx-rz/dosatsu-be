@@ -21,6 +21,45 @@ const createResponse = async ({
   });
 };
 
+export const getResponsesBySurveyId = async ({
+  surveyId,
+}: {
+  surveyId: string;
+}) => {
+  return await prisma.response.findMany({
+    where: {
+      surveyId,
+    },
+  });
+};
+
+export const getResponseDetailsByResponseId = async ({
+  id,
+}: {
+  id: string;
+}) => {
+  return await prisma.response.findUnique({
+    where: { id },
+    select: {
+      surveyId: true,
+      id: true,
+      submittedAt: true,
+      answers: true,
+      account: {
+        select: {
+          user: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
 export const responseRepository = {
   createResponse,
+  getResponsesBySurveyId,
+  getResponseDetailsByResponseId,
 };
