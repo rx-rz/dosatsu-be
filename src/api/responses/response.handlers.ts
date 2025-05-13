@@ -59,21 +59,36 @@ export const getResponses = factory.createHandlers(
     const responses = await responseRepository.getResponsesBySurveyId({
       surveyId,
     });
-    if (!responses){
-      return errorResponse(c, "Response not found", 404)
+    if (!responses) {
+      return errorResponse(c, "Response not found", 404);
     }
-    return successResponse(c, responses, "Responses fetched successfully", 200)
+    return successResponse(
+      c,
+      { responses },
+      "Responses fetched successfully",
+      200
+    );
   }
 );
 
-export const getResponse = factory.createHandlers(validator("param", (value) => {
-  const parsed = v.idSchema.parse(value)
-  return parsed
-}), async (c) => {
-  const {id} = c.req.valid("param")
-  const response = await responseRepository.getResponseDetailsByResponseId({id})
-  if(!response){
-    return errorResponse(c, "Response not found", 404)
+export const getResponse = factory.createHandlers(
+  validator("param", (value) => {
+    const parsed = v.idSchema.parse(value);
+    return parsed;
+  }),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const response = await responseRepository.getResponseDetailsByResponseId({
+      id,
+    });
+    if (!response) {
+      return errorResponse(c, "Response not found", 404);
+    }
+    return successResponse(
+      c,
+      { response },
+      "Response fetched successfully",
+      200
+    );
   }
-  return successResponse(c, response, "Response fetched successfully", 200)
-});
+);
