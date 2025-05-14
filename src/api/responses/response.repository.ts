@@ -44,7 +44,7 @@ export const getResponseDetailsByResponseId = async ({
       surveyId: true,
       id: true,
       submittedAt: true,
-      answers: true,
+      answers: { include: { question: true } },
       account: {
         select: {
           user: {
