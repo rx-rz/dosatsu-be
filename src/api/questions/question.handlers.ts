@@ -1,6 +1,6 @@
 import { createFactory } from "hono/factory";
 import { validator } from "hono/validator";
-import { questionsSchema, v } from "./question.schemas.js";
+import { questionsSchema, v } from "../../schema/question.schemas.js";
 import { questionRepository } from "./question.repository.js";
 import { errorResponse, successResponse } from "../utils/response.js";
 
@@ -51,6 +51,25 @@ export const getQuestionsBySurveyId = factory.createHandlers(
   async (c) => {
     const { surveyId } = c.req.valid("param");
     const questions = await questionRepository.getQuestionsBySurveyId({
+      surveyId,
+    });
+    return successResponse(
+      c,
+      { questions },
+      "Questions fetched successfully",
+      200
+    );
+  }
+);
+
+export const getQuestionAnswersBySurveyId = factory.createHandlers(
+  validator("param", (value) => {
+    const parsed = v.surveyIdSchema.parse(value);
+    return parsed;
+  }),
+  async (c) => {
+    const { surveyId } = c.req.valid("param");
+    const questions = await questionRepository.getQuestionAnswersBySurveyId({
       surveyId,
     });
     return successResponse(

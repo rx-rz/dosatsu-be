@@ -1,6 +1,6 @@
 import { prisma } from "../../db/index.js";
 import { createId } from "@paralleldrive/cuid2";
-import type { CreateSurveyDto } from "./survey.schemas.js";
+import type { CreateSurveyDto } from "../../schema/survey.schemas.js";
 import type { Prisma } from "@prisma/client";
 
 const createSurvey = async (dto: Prisma.SurveyCreateInput) => {

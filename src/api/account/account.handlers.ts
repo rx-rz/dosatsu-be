@@ -3,7 +3,7 @@ import { getJWTPayload } from "../utils/jwt-payload.js";
 import { accountRepository } from "./account.repository.js";
 import { validator } from "hono/validator";
 import { ZodValidationError } from "../utils/errors.js";
-import { v } from "./account.schemas.js";
+import { v } from "../../schema/account.schemas.js";
 import { hashValue } from "../../lib/hash.js";
 import { compare } from "bcryptjs";
 

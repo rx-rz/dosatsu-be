@@ -1,6 +1,6 @@
 import { createFactory } from "hono/factory";
 import { validator } from "hono/validator";
-import { v } from "./survey.schemas.js";
+import { v } from "../../schema/survey.schemas.js";
 import { surveyRepository } from "./survey.repository.js";
 import { errorResponse, successResponse } from "../utils/response.js";
 import { getJWTPayload } from "../utils/jwt-payload.js";

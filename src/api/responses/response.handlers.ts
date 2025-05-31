@@ -1,6 +1,6 @@
 import { createFactory } from "hono/factory";
 import { validator } from "hono/validator";
-import { v } from "./response.schemas.js";
+import { v } from "../../schema/response.schemas.js";
 import { responseRepository } from "./response.repository.js";
 import { errorResponse, successResponse } from "../utils/response.js";
 

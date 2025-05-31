@@ -60,6 +60,27 @@ const getQuestionsBySurveyId = async ({ surveyId }: { surveyId: string }) => {
   });
 };
 
+const getQuestionAnswersBySurveyId = async ({surveyId}: {surveyId: string}) => {
+  return await prisma.question.findMany({
+    where: {surveyId},
+    select: {
+      questionText: true,
+      questionType: true,
+      id: true,
+      answers: {
+        select: {
+          id: true,
+          answerText: true,
+          answerJson: true,
+          answerNumber: true,
+          questionId: true,
+          createdAt: true,
+        },
+      },
+    }
+  })
+}
+
 const updateQuestion = async ({
   questionId,
   dto,
@@ -79,11 +100,13 @@ const deleteQuestion = async (id: { id: string }) => {
   });
 };
 
+
 export const questionRepository = {
   checkIfQuestionExists,
   upsertQuestion,
   getQuestionById,
   getQuestionsBySurveyId,
   updateQuestion,
+  getQuestionAnswersBySurveyId,
   deleteQuestion,
 };

@@ -1,6 +1,6 @@
 import { validator } from "hono/validator";
 import { createFactory } from "hono/factory";
-import { v } from "./auth.schemas.js";
+import { v } from "../../schema/auth.schemas.js";
 import { hashValue } from "../../lib/hash.js";
 import { prisma } from "../../db/index.js";
 import { authRepository } from "./auth.repository.js";
