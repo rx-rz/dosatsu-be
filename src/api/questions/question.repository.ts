@@ -67,6 +67,7 @@ const getQuestionAnswersBySurveyId = async ({surveyId}: {surveyId: string}) => {
       questionText: true,
       questionType: true,
       id: true,
+      options: true,
       answers: {
         select: {
           id: true,
