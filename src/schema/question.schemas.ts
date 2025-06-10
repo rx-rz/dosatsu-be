@@ -8,7 +8,7 @@ const surveyIdSchema = z.object({
   surveyId: z.string().cuid2(),
 });
 
-const paramsSchema = idSchema.merge(surveyIdSchema)
+const paramsSchema = idSchema.merge(surveyIdSchema);
 
 const baseQuestionSchema = z.object({
   questionText: z.string().min(1),
@@ -25,8 +25,8 @@ export const questionSchema = z.discriminatedUnion("questionType", [
         .object({
           placeholder: z.string().optional(),
           isMultiline: z.boolean().default(false),
-          minAnswerLength: z.number().int().min(0).default(1),
-          maxAnswerLength: z.number().int().min(1).default(255),
+          minAnswerLength: z.number().int().min(0).nullable(),
+          maxAnswerLength: z.number().int().min(1).nullable(),
         })
         .default({
           placeholder: "",
@@ -35,7 +35,7 @@ export const questionSchema = z.discriminatedUnion("questionType", [
           maxAnswerLength: 255,
         }),
     })
-    .merge(baseQuestionSchema),
+  .merge(baseQuestionSchema),
 
   z
     .object({
@@ -43,8 +43,8 @@ export const questionSchema = z.discriminatedUnion("questionType", [
       options: z
         .object({
           placeholder: z.string().optional(),
-          minEmailLength: z.number().int().min(0).default(1),
-          maxEmailLength: z.number().int().min(1).default(255),
+          minEmailLength: z.number().int().min(0).nullable(),
+          maxEmailLength: z.number().int().min(1).nullable(),
           allowedDomains: z.string().optional().default(""),
           disallowedDomains: z.string().optional().default(""),
           allowDuplicates: z.boolean().default(false),
@@ -67,8 +67,8 @@ export const questionSchema = z.discriminatedUnion("questionType", [
         .object({
           placeholder: z.string().optional(),
           allowDecimal: z.boolean().default(false),
-          min: z.number().default(Number.NEGATIVE_INFINITY),
-          max: z.number().default(Number.POSITIVE_INFINITY),
+          min: z.number().default(Number.NEGATIVE_INFINITY).nullable(),
+          max: z.number().default(Number.POSITIVE_INFINITY).nullable(),
         })
         .default({
           placeholder: "",
@@ -354,7 +354,8 @@ export const questionsSchema = z.array(questionSchema);
 
 export const v = {
   createQuestionSchema: questionSchema,
+  createQuestionsSchema: questionsSchema,
   idSchema,
   surveyIdSchema,
-  paramsSchema
+  paramsSchema,
 };

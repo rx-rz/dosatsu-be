@@ -89,7 +89,7 @@ model Survey {
 }
 
 model Question {
-  id           String       @id
+  id           String       @id @unique
   surveyId     String?      @map("survey_id")
   questionText String       @map("question_text")
   questionType QuestionType @default(text) @map("question_type")
