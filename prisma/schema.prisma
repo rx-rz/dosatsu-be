@@ -1,0 +1,136 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+enum QuestionType {
+  text
+  email
+  number
+  phone
+  multiple_choice
+  checkbox
+  dropdown
+  rating
+  likert
+  linear_scale
+  date
+  time
+  datetime
+  file
+  slider
+}
+
+enum ProviderIdType {
+  google
+  credentials
+}
+
+model User {
+  id             String   @id @default(cuid(2))
+  name           String
+  email          String   @unique
+  emailVerified  Boolean  @default(false) @map("email_verified")
+  image          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @map("updated_at")
+  idempotencyKey String?  @unique @map("idempotency_key")
+
+  accounts Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id           String         @id @default(cuid(2))
+  providerId   ProviderIdType @default(credentials) @map("provider_id")
+  accountId    String         @map("account_id")
+  userId       String         @map("user_id")
+  password     String?
+  accessToken  String?        @map("access_token")
+  refreshToken String?        @map("refresh_token")
+
+  surveys   Survey[]
+  responses Response[]
+
+  idToken        String?  @map("id_token")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+  idempotencyKey String?  @unique @map("idempotency_key")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, providerId])
+  @@map("accounts")
+}
+
+model Survey {
+  id                      String   @id @default(cuid(2))
+  accountId               String?  @map("user_id")
+  title                   String
+  description             String?
+  requiresSignIn          Boolean  @default(false) @map("requires_sign_in")
+  showProgressBar         Boolean  @default(false) @map("show_progress_bar")
+  showLinkToSubmitAnother Boolean  @default(false) @map("show_link_to_submit_another")
+  isPublished             Boolean  @default(false) @map("is_published")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
+  idempotencyKey          String?  @unique @map("idempotency_key")
+
+  account   Account?   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  questions Question[]
+  responses Response[]
+
+  @@map("surveys")
+}
+
+model Question {
+  id           String       @id @unique
+  surveyId     String?      @map("survey_id")
+  questionText String       @map("question_text")
+  questionType QuestionType @default(text) @map("question_type")
+  options      Json?
+  required     Boolean      @default(true)
+  orderNumber  Int          @map("order_number")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
+
+  survey  Survey?  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answers Answer[]
+
+  @@map("questions")
+}
+
+model Response {
+  id             String   @id @default(cuid(2))
+  surveyId       String   @map("survey_id")
+  accountId      String?  @map("user_id")
+  submittedAt    DateTime @default(now()) @map("submitted_at")
+  idempotencyKey String?  @unique @map("idempotency_key")
+
+  survey  Survey?  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  account Account? @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  answers Answer[]
+
+  @@map("responses")
+}
+
+model Answer {
+  id           String   @id @default(cuid(2))
+  responseId   String?  @map("response_id")
+  questionId   String?  @map("question_id")
+  answerText   String?  @map("answer_text")
+  answerNumber Decimal? @map("answer_number")
+  answerJson   Json?    @map("answer_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  response Response? @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("answers")
+}
