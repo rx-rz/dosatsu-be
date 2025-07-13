@@ -82,18 +82,22 @@ export const loginUser = factory.createHandlers(
       name: account.user.name,
       exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
     };
-
     const token = await sign(payload, process.env.JWT_SECRET!);
 
     setCookie(c, "access_token", `Bearer ${token}`, {
       httpOnly: true,
-      secure: false, 
-      sameSite: "None", 
+      secure: false,
+      sameSite: "None",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    return successResponse(c, payload, "Login successful", 200);
+    return successResponse(
+      c,
+      { ...payload, access_token: token },
+      "Login successful",
+      200
+    );
   }
 );
 
