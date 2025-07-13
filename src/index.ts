@@ -84,7 +84,7 @@ app.onError((err, c) => {
 });
 
 app.notFound((c) => {
-  return c.json({"Nothing for you"}, 404)
+  return c.text("Nothing for you", 404)
 })
 
 serve(
