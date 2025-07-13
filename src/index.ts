@@ -25,7 +25,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? [process.env.VPS_IP!, "http://localhost:5173", "https://dosatsu-fe.vercel.app"].filter(Boolean)
+        ? ["http://localhost:5173", "https://dosatsu-fe.vercel.app"]
         : [
             "http://localhost:5173",
             "http://localhost:3000",
