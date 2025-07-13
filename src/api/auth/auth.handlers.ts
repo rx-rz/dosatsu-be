@@ -56,38 +56,44 @@ export const registerUser = factory.createHandlers(
 
 export const loginUser = factory.createHandlers(
   validator("json", (value) => {
-    const parsed = v.loginUserSchema.parse(value);
-    return parsed;
+    return v.loginUserSchema.parse(value);
   }),
   async (c) => {
     const { email, password } = c.req.valid("json");
+
     const account = await authRepository.findAccountByAccountId({
       accountId: email,
       providerId: "credentials",
     });
-    if (!account) {
+
+    if (!account || !account.password) {
       return errorResponse(c, "Invalid credentials", 401);
     }
-    const isValid = await compare(password, account.password ?? "");
+
+    const isValid = await compare(password, account.password);
     if (!isValid) {
       return errorResponse(c, "Invalid credentials", 401);
     }
+
     const payload = {
       account_id: account.id,
       email: account.user.email,
       is_verified: account.user.emailVerified,
       name: account.user.name,
-      exp: Math.floor(Date.now() / 1000) + 60 * 500,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
     };
+
     const token = await sign(payload, process.env.JWT_SECRET!);
+
     setCookie(c, "access_token", `Bearer ${token}`, {
       httpOnly: true,
-      secure: false,
-      sameSite: "None",
+      secure: false, // set to true in production (HTTPS)
+      sameSite: "None", // required for cross-origin
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-    return successResponse(c, { ...payload }, "Login successful", 200);
+
+    return successResponse(c, payload, "Login successful", 200);
   }
 );
 
