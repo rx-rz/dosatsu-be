@@ -41,8 +41,8 @@ RUN pnpm install --frozen-lockfile --prod
 # Copy built application and generated Prisma client from builder stage
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/api ./api
-COPY --from=builder /app/index.js ./
+COPY --from=builder /app/src/api ./api
+COPY --from=builder /app/src/index.js ./
 
 # Remove environment files for security
 RUN rm -f .env*
