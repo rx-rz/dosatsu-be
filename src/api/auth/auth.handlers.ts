@@ -88,7 +88,7 @@ export const loginUser = factory.createHandlers(
     setCookie(c, "access_token", `Bearer ${token}`, {
       httpOnly: true,
       secure: false, 
-      sameSite: "Lax", 
+      sameSite: "None", 
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
