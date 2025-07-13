@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: dosatsu-app
     ports:
-      - "3001:3001"
+      - 3001
     environment:
       DB_URL: ${DB_URL}
       POSTGRES_USER: ${POSTGRES_USER}
