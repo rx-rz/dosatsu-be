@@ -6,7 +6,6 @@ services:
     container_name: dosatsu-app
     ports:
       - 3001
-      - 80
     environment:
       DB_URL: ${DB_URL}
       POSTGRES_USER: ${POSTGRES_USER}
