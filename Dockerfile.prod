@@ -7,6 +7,9 @@ RUN apk add --no-cache openssl
 RUN corepack enable
 RUN corepack prepare pnpm@latest --activate
 
+# Install tsx for running TS directly
+RUN pnpm add -g tsx
+
 # Build stage
 FROM base AS builder
 
@@ -15,39 +18,32 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install all dependencies (including dev dependencies for build)
+# Install all dependencies (incl. dev for Prisma)
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy everything
 COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
-
-# Build the application (if you have a build step)
-# RUN pnpm run build
 
 # Production stage
 FROM base AS runner
 
 WORKDIR /app
 
-# Copy package files
+# Copy only what's needed
 COPY package.json pnpm-lock.yaml ./
-
-# Install only production dependencies
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy built application and generated Prisma client from builder stage
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Copy prisma files (for migrations/deploy)
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/src/api ./api
-COPY --from=builder /app/src/index.js ./
 
-# Remove environment files for security
+COPY --from=builder /app/src ./src
+
+
 RUN rm -f .env*
 
-# Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S hono -u 1001 && \
     chown -R hono:nodejs /app
@@ -56,9 +52,8 @@ USER hono
 
 EXPOSE 3001
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3001/api/v1/ || exit 1
 
-# Start the application
-CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm start"]
+# Start the app
+CMD ["sh", "-c", "pnpm prisma migrate deploy && tsx src/index.ts"]
