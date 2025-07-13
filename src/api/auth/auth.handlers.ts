@@ -80,7 +80,13 @@ export const loginUser = factory.createHandlers(
       exp: Math.floor(Date.now() / 1000) + 60 * 500,
     };
     const token = await sign(payload, process.env.JWT_SECRET!);
-    setCookie(c, "access_token", `Bearer ${token}`);
+    setCookie(c, "access_token", `Bearer ${token}`, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "None",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
     return successResponse(c, { ...payload }, "Login successful", 200);
   }
 );

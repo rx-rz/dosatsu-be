@@ -1,47 +1,55 @@
-import { deleteCookie, getCookie } from "hono/cookie";
+import { getCookie, deleteCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { verify } from "hono/jwt";
-import { JwtTokenExpired } from "hono/utils/jwt/types";
+import type { JwtTokenExpired } from "hono/utils/jwt/types";
+import type { MiddlewareHandler } from "hono";
 
 export type JWTPayload = {
   account_id: string;
   email: string;
   name: string;
-  exp: string;
+  exp: number;
   is_verified: boolean;
 };
 
-export const requireAuth = createMiddleware(async (c, next) => {
-  const authHeader = getCookie(c, "access_token");
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token) {
-    deleteCookie(c, "access_token");
-    return c.json({ success: false, message: "", details: null }, 401);
-  }
-  try {
-    const payload: JWTPayload = (await verify(
-      token,
-      process.env.JWT_SECRET ?? ""
-    )) as unknown as JWTPayload;
-    // if (payload.is_verified === false) {
-    //   return c.json(
-    //     { success: false, message: "Verify account first", details: null },
-    //     401
-    //   );
-    // }
-    c.set("jwt_payload", payload);
-  } catch (err) {
-    if (err instanceof JwtTokenExpired) {
+export const requireAuth: MiddlewareHandler = createMiddleware(
+  async (c, next) => {
+    const cookieToken = getCookie(c, "access_token");
+    const headerToken = c.req.header("Authorization");
+
+    const token =
+      (headerToken?.startsWith("Bearer ") && headerToken.split(" ")[1]) ||
+      (cookieToken?.startsWith("Bearer ") && cookieToken.split(" ")[1]);
+
+    if (!token) {
       deleteCookie(c, "access_token");
       return c.json(
-        { success: false, message: "Token expired", details: err },
+        { success: false, message: "Authentication required", details: null },
         401
       );
     }
-    return c.json(
-      { success: false, message: "Invalid token", details: err },
-      403
-    );
+
+    try {
+      const payload = (await verify(
+        token,
+        process.env.JWT_SECRET ?? ""
+      )) as JWTPayload;
+
+      c.set("jwt_payload", payload);
+      await next();
+    } catch (err) {
+      const isExpired = (err as JwtTokenExpired)?.name === "JwtTokenExpired";
+
+      deleteCookie(c, "access_token");
+
+      return c.json(
+        {
+          success: false,
+          message: isExpired ? "Token expired" : "Invalid or malformed token",
+          details: err,
+        },
+        isExpired ? 401 : 403
+      );
+    }
   }
-  return await next();
-});
+);
