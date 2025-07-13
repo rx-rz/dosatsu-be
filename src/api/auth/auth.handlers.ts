@@ -87,10 +87,10 @@ export const loginUser = factory.createHandlers(
 
     setCookie(c, "access_token", `Bearer ${token}`, {
       httpOnly: true,
-      secure: false, // set to true in production (HTTPS)
-      sameSite: "None", // required for cross-origin
+      secure: false, 
+      sameSite: "Lax", 
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return successResponse(c, payload, "Login successful", 200);

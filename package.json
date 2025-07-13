@@ -17,7 +17,6 @@
     "@prisma/client": "^6.6.0",
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.2",
-    "better-auth": "^1.2.7",
     "drizzle-kit": "^0.31.0",
     "drizzle-orm": "^0.42.0",
     "drizzle-zod": "^0.7.1",
