@@ -83,6 +83,10 @@ app.onError((err, c) => {
   return errorResponse(c, "An unexpected error occurred", 500, undefined, err);
 });
 
+app.notFound((c) => {
+  return c.json({"Nothing for you"}, 404)
+})
+
 serve(
   {
     fetch: app.fetch,
