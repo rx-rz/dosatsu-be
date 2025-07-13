@@ -2,7 +2,13 @@
   "name": "deeppoll-server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "db:migrate": "npx prisma migrate deploy",
+    "db:studio": "npx prisma studio",
+    "docker:dev": "docker-compose up --build",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up --build -d",
+    "docker:down": "docker-compose down",
+    "docker:prod:down": "docker-compose -f docker-compose.prod.yml down"
   },
   "dependencies": {
     "@google/genai": "^1.8.0",

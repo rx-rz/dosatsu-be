@@ -18,7 +18,6 @@ export const createOrUpdateQuestion = factory.createHandlers(
   async (c) => {
     const dto = c.req.valid("json");
     const { surveyId } = c.req.valid("param");
-    console.log({ dto });
     const questions = await Promise.all(
       dto.map((questionDto) =>
         questionRepository.upsertQuestion({ dto: questionDto, surveyId })

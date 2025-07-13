@@ -23,12 +23,15 @@ app.use(secureHeaders());
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "http://localhost:8080",
-      "http://127.0.0.1:3000",
-    ],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? [process.env.VPS_IP!].filter(Boolean)
+        : [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:3000",
+          ],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
@@ -43,10 +46,9 @@ app.get("/", (c) => {
 
 app.route("/auth", authRouter);
 app.route("/surveys", surveyRouter);
-app.route("/ai", promptRouter)
+app.route("/ai", promptRouter);
 app.route("", responseRouter);
 app.route("", questionRouter);
-
 
 app.onError((err, c) => {
   console.error(err);
@@ -80,8 +82,6 @@ app.onError((err, c) => {
 
   return errorResponse(c, "An unexpected error occurred", 500, undefined, err);
 });
-
-
 
 serve(
   {
