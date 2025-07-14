@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - 3001
+      - "3001:3001"
     environment:
       DB_URL: ${DB_URL}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      
+
   postgres:
     image: postgres:17-alpine
     environment:
