@@ -34,7 +34,7 @@ app.use(
     origin: allowedOrigins,
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-    credentials: false,
+    credentials: true,
     maxAge: 3600,
     exposeHeaders: ["Content-Range", "X-Content-Range"],
   })
