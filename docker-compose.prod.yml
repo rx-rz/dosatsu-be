@@ -15,7 +15,7 @@ services:
       VPS_IP: ${VPS_IP}
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
     networks:
       - dosatsu-network
     restart: unless-stopped
@@ -34,12 +34,6 @@ services:
     networks:
       - dosatsu-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dosatsuuser -d dosatsu"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
 networks:
   dosatsu-network:
