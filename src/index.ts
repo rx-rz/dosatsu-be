@@ -26,7 +26,7 @@ app.use(
       process.env.NODE_ENV === "production"
         ? [
             "http://localhost:5173",
-            "https://dosatsu-fe.vercel.app",
+            "https://ibeere-fe.vercel.app",
           ]
         : [
             "http://localhost:5173",
