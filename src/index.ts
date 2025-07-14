@@ -25,7 +25,6 @@ app.use(
     origin:
       process.env.NODE_ENV === "production"
         ? [
-            "http://localhost:5173",
             "https://ibeere-fe.vercel.app",
           ]
         : [
