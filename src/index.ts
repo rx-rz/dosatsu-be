@@ -21,7 +21,7 @@ const app = new Hono().basePath("/api/v1");
 app.use(secureHeaders());
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://ibeere-fe.vercel.app"]
+    ? "https://ibeere-fe.vercel.app"
     : [
         "http://localhost:5173",
         "http://localhost:3000",
@@ -33,8 +33,8 @@ app.use(
   cors({
     origin: allowedOrigins,
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true,
+    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    credentials: false,
     maxAge: 3600,
     exposeHeaders: ["Content-Range", "X-Content-Range"],
   })
