@@ -84,19 +84,20 @@ app.onError((err, c) => {
 });
 
 app.notFound((c) => {
-  return c.text("Nothing for you", 404)
-})
+  return c.text("Nothing for you", 404);
+});
 
 serve(
-  process.env.NODE_ENV === "production" ? {
-    fetch: app.fetch,
-    port: 3001,
-    
-  } : {
-    fetch: app.fetch,
-    port: 3001,
-    hostname: "0.0.0.0"
-  },
+  process.env.NODE_ENV === "production"
+    ? {
+        fetch: app.fetch,
+        port: 3001,
+        hostname: "0.0.0.0",
+      }
+    : {
+        fetch: app.fetch,
+        port: 3001,
+      },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
   }
