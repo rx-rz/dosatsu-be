@@ -88,9 +88,14 @@ app.notFound((c) => {
 })
 
 serve(
-  {
+  process.env.NODE_ENV === "production" ? {
     fetch: app.fetch,
     port: 3001,
+    
+  } : {
+    fetch: app.fetch,
+    port: 3001,
+    hostname: "0.0.0.0"
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
