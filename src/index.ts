@@ -18,7 +18,7 @@ import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
-app.use(secureHeaders());
+// app.use(secureHeaders());
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? "https://ibeere-fe.vercel.app"
