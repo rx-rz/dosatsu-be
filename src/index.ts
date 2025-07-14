@@ -24,9 +24,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? [
-            "https://ibeere-fe.vercel.app",
-          ]
+        ? ["https://ibeere-fe.vercel.app"]
         : [
             "http://localhost:5173",
             "http://localhost:3000",

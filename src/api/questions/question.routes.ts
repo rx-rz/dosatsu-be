@@ -6,7 +6,7 @@ export const questionRouter = new Hono()
 
 questionRouter.post('/surveys/:surveyId/questions', requireAuth, ...createOrUpdateQuestion)
 
-questionRouter.get('/surveys/:surveyId/questions', requireAuth, ...getQuestionsBySurveyId)
+questionRouter.get('/surveys/:surveyId/questions', ...getQuestionsBySurveyId)
 
 questionRouter.get('/surveys/:surveyId/questions/:id', requireAuth, ...getQuestion)
 

@@ -13,7 +13,7 @@ export const surveyRouter = new Hono();
 
 surveyRouter.post("/", requireAuth, ...createSurvey);
 
-surveyRouter.get("/:id", requireAuth, ...getSurvey);
+surveyRouter.get("/:id",  ...getSurvey);
 
 surveyRouter.get("/", requireAuth, ...listSurveys);
 
