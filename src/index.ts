@@ -5,7 +5,6 @@ import {
   DuplicateEntryError,
   InternalServerError,
   PgError,
-  ZodValidationError,
 } from "./api/utils/errors.js";
 import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
@@ -25,7 +24,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["http://localhost:5173", "https://dosatsu-fe.vercel.app", process.env.VPS_IP]
+        ? ["http://localhost:5173", "https://dosatsu-fe.vercel.app", process.env.VPS_IP!]
         : [
             "http://localhost:5173",
             "http://localhost:3000",
