@@ -24,7 +24,10 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["http://localhost:5173", "https://dosatsu-fe.vercel.app", process.env.VPS_IP!]
+        ? [
+            "http://localhost:5173",
+            "https://dosatsu-fe.vercel.app",
+          ]
         : [
             "http://localhost:5173",
             "http://localhost:3000",
@@ -87,17 +90,11 @@ app.notFound((c) => {
 });
 
 serve(
-  process.env.NODE_ENV === "production"
-    ? {
-        fetch: app.fetch,
-        port: 3001,
-        hostname: "0.0.0.0",
-      }
-    : {
-        fetch: app.fetch,
-        port: 3001,
-      },
+  {
+    fetch: app.fetch,
+    port: 3001,
+  },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    console.log(`Server is running on this port: {info.port}`);
   }
 );
