@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    container_name: dosatsu-app
     ports:
       - 3001
     environment:
@@ -26,7 +25,6 @@ services:
 
   postgres:
     image: postgres:17-alpine
-    container_name: dosatsu-poll-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
