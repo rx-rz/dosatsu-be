@@ -8,7 +8,6 @@ import {
 } from "./api/utils/errors.js";
 import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
-import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { questionRouter } from "./api/questions/question.routes.js";
 import { ZodError } from "zod";
@@ -18,13 +17,19 @@ import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
-app.use(
-  "*",
-  cors({
-    origin: ["https://ibeere-fe.vercel.app"], 
-    credentials: true,
-  })
-);
+app.use("*", async (c, next) => {
+  c.header("Access-Control-Allow-Origin", "https://ibeere-fe.vercel.app");
+  c.header("Access-Control-Allow-Credentials", "true");
+  c.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (c.req.method === "OPTIONS") {
+    return c.text("", 200);
+  }
+
+  await next();
+});
+
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
