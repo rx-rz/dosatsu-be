@@ -1,6 +1,8 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { authRouter } from "./api/auth/auth.routes.js";
+import type { CorsOptions } from "cors";
+import cors from "cors";
 import {
   DuplicateEntryError,
   InternalServerError,
@@ -9,7 +11,7 @@ import {
 import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
 import { secureHeaders } from "hono/secure-headers";
-import { cors } from "hono/cors";
+
 import { questionRouter } from "./api/questions/question.routes.js";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
@@ -17,28 +19,36 @@ import { responseRouter } from "./api/responses/response.routes.js";
 import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
+app.use(secureHeaders());
+const corsOption: CorsOptions = {
+  origin: ["https://ibeere-fe.vercel.app", "http://localhost:5173"],
+  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"],
+  credentials: true,
+  allowedHeaders: [
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization",
+  ],
+};
 
-// app.use(secureHeaders());
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? ["https://ibeere-fe.vercel.app", "http://localhost:5173"]
-    : [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://localhost:8080",
-        "http://127.0.0.1:3000",
-      ];
+const corsMiddleware = cors(corsOption);
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-    credentials: true,
-    maxAge: 3600,
-    exposeHeaders: ["Content-Range", "X-Content-Range"],
-  })
-);
+function runMiddleware(
+  req: Request,
+  res: any,
+  fn: (req: any, res: any, next: (err?: any) => void) => void
+) {
+  return new Promise<void>((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) return reject(result);
+      resolve();
+    });
+  });
+}
+
+app.use("*", async (c, next) => {
+  await runMiddleware(c.req.raw, c.res, corsMiddleware);
+  return next();
+});
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
