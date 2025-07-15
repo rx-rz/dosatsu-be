@@ -14,7 +14,7 @@ export const createSurvey = factory.createHandlers(
   }),
   async (c) => {
     const dto = c.req.valid("json");
-    const accountId = (await getJWTPayload(c)).account_id;
+    const accountId = getJWTPayload(c)?.account_id;
     const survey = await surveyRepository.createSurvey({
       ...dto,
       id: createId(),
@@ -41,7 +41,7 @@ export const updateSurvey = factory.createHandlers(
   async (c) => {
     const dto = c.req.valid("json");
     const { id: surveyId } = c.req.valid("param");
-    const accountId = (await getJWTPayload(c)).account_id;
+    const accountId = getJWTPayload(c)?.account_id;
     const survey = await surveyRepository.updateSurvey({
       dto,
       accountId,
@@ -60,7 +60,7 @@ export const updateSurvey = factory.createHandlers(
 );
 
 export const listSurveys = factory.createHandlers(async (c) => {
-  const accountId = (await getJWTPayload(c)).account_id;
+  const accountId = getJWTPayload(c)?.account_id;
   const surveys = await surveyRepository.getSurveysByAccountID({ accountId });
   return successResponse(c, { surveys }, "Surveys fetched successfully", 200);
 });
@@ -84,7 +84,7 @@ export const publishSurvey = factory.createHandlers(
   }),
   async (c) => {
     const { id: surveyId } = c.req.valid("param");
-    const accountId = (await getJWTPayload(c)).account_id;
+    const accountId = getJWTPayload(c)?.account_id;
     const survey = surveyRepository.updateSurvey({
       dto: { isPublished: true },
       surveyId,

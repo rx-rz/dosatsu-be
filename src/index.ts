@@ -8,6 +8,7 @@ import {
 } from "./api/utils/errors.js";
 import { surveyRouter } from "./api/surveys/survey.routes.js";
 import { errorResponse } from "./api/utils/response.js";
+import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { questionRouter } from "./api/questions/question.routes.js";
 import { ZodError } from "zod";
@@ -17,18 +18,27 @@ import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
-app.use("*", async (c, next) => {
-  c.header("Access-Control-Allow-Origin", "https://ibeere-fe.vercel.app");
-  c.header("Access-Control-Allow-Credentials", "true");
-  c.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+// app.use(secureHeaders());
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://ibeere-fe.vercel.app", "http://localhost:5173"]
+    : [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://127.0.0.1:3000",
+      ];
 
-  if (c.req.method === "OPTIONS") {
-    return c.text("", 200);
-  }
-
-  await next();
-});
+app.use(
+  cors({
+    origin: allowedOrigins,
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    credentials: true,
+    maxAge: 3600,
+    exposeHeaders: ["Content-Range", "X-Content-Range"],
+  })
+);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
