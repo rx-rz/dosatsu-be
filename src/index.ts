@@ -30,16 +30,19 @@ const allowedOrigins =
       ];
 
 app.use(
+  "*",
   cors({
-    origin: allowedOrigins,
-    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    origin: "https://ibeere-fe.vercel.app",
     credentials: true,
-    maxAge: 3600,
-    exposeHeaders: ["Content-Range", "X-Content-Range"],
+    allowMethods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
   })
 );
-
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
