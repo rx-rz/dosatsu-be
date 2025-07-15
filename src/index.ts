@@ -18,31 +18,7 @@ import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
-// app.use(secureHeaders());
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? "https://ibeere-fe.vercel.app"
-    : [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://localhost:8080",
-        "http://127.0.0.1:3000",
-      ];
-
-app.use(
-  "*",
-  cors({
-    origin: "https://ibeere-fe.vercel.app",
-    credentials: true,
-    allowMethods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-    allowHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-    ],
-  })
-);
+app.use("/api/*", cors());
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });

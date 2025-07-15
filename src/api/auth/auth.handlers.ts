@@ -84,9 +84,9 @@ export const loginUser = factory.createHandlers(
     };
     const token = await sign(payload, process.env.JWT_SECRET!);
 
-    setCookie(c, "access_token", `Bearer ${token}`, {
+    setCookie(c, "dosatsu_access_token", `Bearer ${token}`, {
       httpOnly: true,
-      secure: false,
+      secure: true, // MUST be true if SameSite is 'None'
       sameSite: "None",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,

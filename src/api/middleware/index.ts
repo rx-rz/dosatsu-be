@@ -14,7 +14,7 @@ export type JWTPayload = {
 
 export const requireAuth: MiddlewareHandler = createMiddleware(
   async (c, next) => {
-    const cookieToken = getCookie(c, "access_token");
+    const cookieToken = getCookie(c, "dosatsu_access_token");
     const headerToken = c.req.header("Authorization");
 
     const token =
