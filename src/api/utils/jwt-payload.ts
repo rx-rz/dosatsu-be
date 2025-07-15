@@ -4,10 +4,9 @@ import { verify } from "hono/jwt";
 
 export const getJWTPayload = async (c: Context): Promise<JWTPayload> => {
   let payload = c.get("jwt_payload") as JWTPayload;
-
   if (!payload) {
-    // Try to extract from Authorization header
     const authHeader = c.req.header("Authorization");
+    console.log({authHeader})
     if (authHeader && authHeader.startsWith("Bearer ")) {
       const token = authHeader.substring(7);
       try {
@@ -16,8 +15,7 @@ export const getJWTPayload = async (c: Context): Promise<JWTPayload> => {
         throw new Error("Invalid JWT token");
       }
     }
-  }
-
+  }console.log("No payload!")
   if (!payload) {
     throw new Error("JWT payload not found");
   }
