@@ -1,10 +1,22 @@
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "3001:80"  # Nginx handles external traffic
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    networks:
+      - dosatsu-network
+    restart: unless-stopped
+
   app:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     environment:
       DB_URL: ${DB_URL}
       POSTGRES_USER: ${POSTGRES_USER}

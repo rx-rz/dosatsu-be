@@ -39,6 +39,7 @@ const corsConfig = {
 };
 
 app.use(cors(corsConfig));
+
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
