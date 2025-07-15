@@ -8,7 +8,7 @@ questionRouter.post('/surveys/:surveyId/questions', requireAuth, ...createOrUpda
 
 questionRouter.get('/surveys/:surveyId/questions', ...getQuestionsBySurveyId)
 
-questionRouter.get('/surveys/:surveyId/questions/:id', requireAuth, ...getQuestion)
+questionRouter.get('/surveys/:surveyId/questions/:id',  ...getQuestion)
 
 questionRouter.get('/surveys/:surveyId/question-answers', requireAuth, ...getQuestionAnswersBySurveyId)
 
