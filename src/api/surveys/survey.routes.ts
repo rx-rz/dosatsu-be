@@ -15,7 +15,7 @@ surveyRouter.post("/", requireAuth, ...createSurvey);
 
 surveyRouter.get("/:id",  ...getSurvey);
 
-surveyRouter.get("/", requireAuth, ...listSurveys);
+surveyRouter.get("/", ...listSurveys);
 
 surveyRouter.patch("/:id", requireAuth, ...updateSurvey);
 
