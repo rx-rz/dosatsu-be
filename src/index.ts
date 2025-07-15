@@ -18,7 +18,13 @@ import { promptRouter } from "./api/prompts/prompt.routes.js";
 
 const app = new Hono().basePath("/api/v1");
 
-app.use("/api/*", cors());
+app.use(
+  "*",
+  cors({
+    origin: ["https://ibeere-fe.vercel.app"], 
+    credentials: true,
+  })
+);
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
