@@ -26,7 +26,8 @@ const corsOption: CorsOptions = {
   credentials: true,
   allowedHeaders: [
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization",
+    "Content-Type",
+    "Authorization",
   ],
 };
 
