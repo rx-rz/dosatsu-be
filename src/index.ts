@@ -32,7 +32,7 @@ const allowedOrigins =
 const corsConfig = {
   origin: allowedOrigins,
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "ngrok-skip-browser-warning"],
   credentials: true,
   maxAge: 3600,
   exposeHeaders: ["Content-Range", "X-Content-Range"],
