@@ -20,6 +20,13 @@ const app = new Hono().basePath("/api/v1");
 
 app.use(secureHeaders());
 
+app.use(cors({
+  origin: "https://ibeere-fe.vercel.app",
+  credentials: true,
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
+
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
