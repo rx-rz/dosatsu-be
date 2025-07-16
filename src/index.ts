@@ -21,7 +21,7 @@ const app = new Hono().basePath("/api/v1");
 app.use(secureHeaders());
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? "https://ibeere-fe.vercel.app"
+    ? ["https://ibeere-fe.vercel.app", "http://localhost:5173"]
     : [
         "http://localhost:5173",
         "http://localhost:3000",
